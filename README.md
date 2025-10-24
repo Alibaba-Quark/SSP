@@ -23,8 +23,8 @@ Through RL training with rule-based outcome rewards, SSP enables two roles to **
 
 # 🔥 News
 
-* **[2025.10.24]** We released the SSP codebase.
-* **[2025.10.22]** Released our paper on arXiv: [2510.18821](https://arxiv.org/abs/2510.18821).
+- **[2025.10.24]** We released the SSP codebase.
+- **[2025.10.22]** Released our paper on arXiv: [2510.18821](https://arxiv.org/abs/2510.18821).
 
 # 💡 Main Results
 
@@ -131,7 +131,17 @@ The retrieval service will run at `http://{search_ip}:8000`.
 
 Unlike supervised learning approaches, SSP **does not require question-answer pairs**. Instead, it only needs proposer prompts that guide the problem generation. The proposer generates problems based on these prompts, and the solver attempts to answer them. Through self-play, both agents improve without any ground-truth QA pairs.
 
-For data processing examples and format details, refer to `examples/data_preprocess/preprocess_ssp_dataset.py`.
+The given ground-truth list with prompts used in training and the QA pairs used in evaluation will be made available on Hugging Face soon. Please stay tuned!
+
+- After downloading the training data, run the preprocessing script:
+
+  ```bash
+  python examples/data_preprocess/preprocess_ssp_train_dataset.py --input /path/to/jsonl --output /path/to/processed_jsonl
+  ```
+
+  This will format the training data into the required structure for SSP training.
+
+- There is no need to preprocess evaluation data, as it is already in the required format. Just provide the path to it in the training script. For customization, please refer to `examples/data_preprocess/preprocess_ssp_eval_dataset.py` to see how to format the test data.
 
 ## Configure Training Script
 
