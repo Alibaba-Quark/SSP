@@ -1,0 +1,30 @@
+tools:
+  - class_name: quarl.tool.search_tool.QuarkSearchTool
+    config:
+      retrieval_service_url:
+        default: "http://0.0.0.0:8000/retrieve"
+        wiki: "http://0.0.0.0:8000/retrieve"
+      num_workers: 120
+      rate_limit: 120
+      timeout: 5000
+      topk: 3
+      type: native
+    tool_schema:
+      type: function
+      function:
+        name: search
+        description: Searches the web for relevant information based on the given query.
+        parameters:
+          type: object
+          properties:
+            query_list:
+              type: array
+              item:
+                type: string
+              description: A list of fully-formed semantic queries. The tool will return search results for each query.
+            data_source:
+              type: string
+              description: The data source belongs to.
+          required: 
+            - query_list
+            - data_source

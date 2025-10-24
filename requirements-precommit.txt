@@ -1,0 +1,6 @@
+pre-commit
+black
+isort
+autopep8
+flake8
+shellcheck-py

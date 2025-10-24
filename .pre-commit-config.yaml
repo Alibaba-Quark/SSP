@@ -1,0 +1,60 @@
+# exclude: ^(verl)(/|$)
+repos:
+  - repo: local
+    hooks:
+    # 代码格式化工具
+    - id: black
+      name: black
+      description: "Black: The uncompromising Python code formatter"
+      entry: black
+      types: [python]
+      language: python
+      args: ['--line-length=120']
+
+    # 导入排序工具
+    - id: isort
+      name: isort
+      description: "自动排序导入语句"
+      entry: isort
+      types: [python]
+      language: python      
+      args: ['--profile=black', '--line-length=120']
+
+    # automatically formats Python code to conform to the PEP8 
+    - id: autopep8
+      name: autopep8
+      description: "automatically formats Python code to conform to the PEP8"
+      entry: autopep8
+      types: [python]
+      language: python
+      args: ['--in-place', '--recursive', '--ignore=W503,W504,W605,E501,E266,E203', '--max-line-length=120'] # E203 autopep8与black存在冲突
+
+    # # 静态类型检查
+    # - id: mypy
+    #   name: mypy
+    #   description: "静态类型检查"
+    #   entry: mypy
+    #   types: [python]
+    #   language: python
+    #   args: [--ignore-missing-imports]
+
+    # 代码风格检查（PEP8）
+    - id: flake8
+      name: flake8
+      description: "检查 PEP8 规范"
+      entry: flake8
+      types: [python]
+      language: python
+      args: ['--ignore=W503,W504,W605,E501,E266,E203,F541,F401', '--max-line-length=120']
+
+    # shell脚本检查
+    - id: shellcheck
+      name: shellcheck
+      description: "检查shell脚本语法"
+      entry: shellcheck
+      language: python
+      files: ".sh"
+      args: ['--severity=warning']
+
+
+

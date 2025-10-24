@@ -1,0 +1,98 @@
+hydra:
+  searchpath:
+    - file:///root/code/verl/verl/trainer/config
+
+defaults:
+  - ppo_trainer
+  - _self_
+
+reward_model:
+  model:
+    type: default
+
+actor_rollout_ref:
+  rollout:
+    multi_turn:
+      max_assistant_turns: 10 # maximum assistant turns
+      format: quark # quark or vllm
+      enable: true # enable multi-turn rollout
+      use_inference_chat_template: false # use inference chat template
+      tokenization_sanity_check_mode: disable # disable tokenization sanity check
+      tool_config_path: null # tool config path
+
+
+ # Trainer configuration overrides
+
+quark:
+  task_type: origin
+  diff_val_reward_fn_config: # for quark deep search
+    reward_model:
+      reward_manager: naive
+    data:
+      reward_fn_key: data_source
+    custom_reward_function:
+      path: null
+      name: compute_score
+
+# Self-Play specific configuration
+self_play:
+  
+  enable: false
+  generation_data_path: null # Path to problem generation seed data
+  lang: zh # zh or en
+  save_freq: 5
+  use_rag_filter: true # whether to use RAG-based filtering during problem extraction
+  use_search_terms_filter: false # whether to use search terms filtering during problem extraction, filter out questions that the ground_truth is in the search terms
+  noisy_RAG_materials: 0 # number of additional noisy RAG materials to include from other trajectories (0 = disabled)
+  combine_update: false # whether to combine proposer and solver updates into a single update (only if both are enabled)
+  validate_config: true # whether to validate config in RayPPOTrainer
+  
+  mini_epochs: 1 # number of mini-epochs per training iteration
+  answer_pattern: "answer" # pattern to extract from generation output, "answer" or "question"
+  # Generation phase settings (proposer)
+  proposer:
+    enable: true
+    n: 5
+    do_sample: true
+    temperature: 0.8
+    format_penalty: -1
+    warm_up_steps: 5
+    left : 0.0 # parameter for intermediate difficulty reward
+    right: 1.0 # parameter for intermediate difficulty reward
+
+    reward_type: "1-acc"  #  "1-acc" or "intermediate_difficulty"
+    adv_estimator: "reinforce_plus_plus"
+    
+  # Solving phase settings (solver)  
+  solver:
+    enable: true
+    do_sample: true
+    temperature: 1
+
+  
+  # Dynamic sampling configuration
+  # When enabled, proposer will use multiple different batch_dict from dataloader until enough valid problems are accumulated
+  # If max_retry_attempts is reached or dataloader is exhausted, existing valid problems will be randomly replicated to reach batch_size
+  # This helps avoid dummy problems and sparse rewards during training
+  dynamic_sampling:
+    enable: false # Enable dynamic sampling to avoid dummy problems
+    max_retry_attempts: 5 # Maximum number of additional batches to use (total batches = 1 + max_retry_attempts)
+    min_valid_ratio: 1.0 # Minimum ratio of valid problems required (1.0 = all problems must be valid, 0.8 = 80% valid)
+  
+  # Reward-based dynamic sampling configuration
+  # When enabled, will filter out proposer groups with zero reward variance and their corresponding solver trajectories
+  # This helps ensure training data has sufficient reward diversity
+  reward_dynamic_sampling:
+    enable: false # Enable reward-based dynamic sampling
+    metric: "seq_final_reward" # Metric to use for filtering: "seq_final_reward" or "seq_reward"
+    max_num_gen_batches: 30 # Maximum number of generation batches to use for filtering
+  
+  # Extraction failure handling
+  extraction_failure:
+    # Strategy: "dummy" (use dummy problems) or "reuse" (reuse existing problems from pool)
+    strategy: "reuse"
+    # If strategy is "reuse" but pool is empty, fallback to dummy problems
+    fallback_to_dummy: true
+    reuse_success_rate_threshold: 0.5 # Success rate threshold for reusing existing problems
+    pool_clear_interval: 5 # Interval (in training iterations) to clear part of the solving pool to avoid stagnation
+    keep_ratio: 0 # Ratio of problems to keep in the solving pool
