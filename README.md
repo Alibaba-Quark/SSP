@@ -23,7 +23,8 @@ Through RL training with rule-based outcome rewards, SSP enables two roles to **
 
 # 🔥 News
 
-* **[2025.10.22]** Released our paper on arXiv: [2510.18821](https://arxiv.org/abs/2510.18821)
+* **[2025.10.24]** We released the SSP codebase.
+* **[2025.10.22]** Released our paper on arXiv: [2510.18821](https://arxiv.org/abs/2510.18821).
 
 # 💡 Main Results
 
