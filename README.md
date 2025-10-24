@@ -36,7 +36,22 @@ SSP demonstrates significant improvements on QA tasks across different training 
 
 # 🛠️ Installation
 
-1. **Install VeRL**
+1. **Create Conda Environment**
+
+```bash
+conda create -n ssp python=3.10 -y
+conda activate ssp
+```
+
+2. **Clone SSP Repository**
+
+```bash
+git clone https://github.com/Alibaba-Quark/SSP.git
+cd SSP
+export PYTHONPATH=$PYTHONPATH:$(pwd)
+```
+
+3. **Install VeRL**
 
 ```bash
 # Clone and install VeRL
@@ -44,16 +59,10 @@ git clone https://github.com/volcengine/verl
 cd verl
 git checkout cb809d66e46dfd3342d008628891a14a054fa424 # verified commit
 pip install -e .
+cd ..
 ```
 
-2. **Install SSP (this repository)**
-
-```bash
-cd /path/to/SSP
-export PYTHONPATH=$PYTHONPATH:$(pwd)
-```
-
-3. **Install dependencies**
+4. **Install Dependencies**
 
 ```bash
 # Configure pip source
