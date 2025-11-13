@@ -3,7 +3,7 @@
 <p align="center">
   <a href='http://arxiv.org/abs/2510.18821'><img src='https://img.shields.io/badge/Paper-arXiv-red?style=flat&logo=arxiv' alt='arXiv PDF'></a>
   <a href='https://huggingface.co/collections'><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Models-0984e3'></a>
-  <a href='https://huggingface.co/datasets'><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Datasets-00b894'></a>
+  <a href='https://huggingface.co/datasets/Quark-LLM/SSP'><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Datasets-00b894'></a>
   <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="License"></a>
 </p>
 
@@ -131,7 +131,7 @@ The retrieval service will run at `http://{search_ip}:8000`.
 
 Unlike supervised learning approaches, SSP **does not require question-answer pairs**. Instead, it only needs proposer prompts that guide the problem generation. The proposer generates problems based on these prompts, and the solver attempts to answer them. Through self-play, both agents improve without any ground-truth QA pairs.
 
-The given ground-truth list with prompts used in training and the QA pairs used in evaluation will be made available on Hugging Face soon. Please stay tuned!
+The given ground-truth list with prompts used in training and the QA pairs used in evaluation are available in our [Hugging Face Dataset](https://huggingface.co/datasets/Quark-LLM/SSP).
 
 - After downloading the training data, run the preprocessing script:
 
@@ -260,20 +260,17 @@ bash examples/train_ssp.sh
 
 # 🙏🏻 Acknowledgements
 
-This project builds on [Search-R1 ](https://github.com/PeterGriffinJin/Search-R1)and [veRL](https://github.com/volcengine/verl) . We thank the original authors for their open-source contributions.
+This project builds on [Search-R1](https://github.com/PeterGriffinJin/Search-R1) and [veRL](https://github.com/volcengine/verl) . We thank the original authors for their open-source contributions.
 
 # ⭐️ Citation
 
 If you find this work useful, please kindly cite:
 
 ```bibtex
-@misc{lu2025searchselfplay,
-      title={Search Self-play: Pushing the Frontier of Agent Capability without Supervision},
-      author={Hongliang Lu and Yuhang Wen and Pengyu Cheng and Ruijin Ding and Haotian Xu and Jiaqi Guo and Chutian Wang and Haonan Chen and Xiaoxi Jiang and Guanjun Jiang},
-      year={2025},
-      eprint={2510.18821},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2510.18821},
+@article{lu2025searchselfplay,
+  title={Search Self-play: Pushing the Frontier of Agent Capability without Supervision},
+  author={Lu, Hongliang and Wen, Yuhang and Cheng, Pengyu and Ding, Ruijin and Xu, Haotian and Guo, Jiaqi and Wang, Chutian and Chen, Haonan and Jiang, Xiaoxi and Jiang, Guanjun},
+  journal={arXiv preprint arXiv:2510.18821},
+  year={2025}
 }
 ```
