@@ -51,31 +51,32 @@ cd SSP
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 ```
 
-3. **Install VeRL**
+3. **Install Dependencies**
+
+Our experiments were run in an internally built Docker image. The `requirements.txt` is exported from that image, but please note that it contains many packages that are not strictly required by this project. Installing it as-is can take a long time if you aim for a 1:1 reproduction. You can choose to start with the core packages listed in the comments below if you want a faster setup.
+
+```bash
+pip install -r requirements.txt
+
+# core packages
+# pip3 install torch==2.6.0 torchvision==0.21.0 flash-attn==2.5.8 flashinfer==0.2.0 numpy==1.26.4
+# pip3 install tensorboardX qwen_vl_utils einops==0.8.0 openai==1.60.1
+# pip3 install transformers==4.55.0 PyYAML==6.0.1 fastapi==0.115.7 uvicorn==0.34.0
+# pip3 install sglang==0.4.6.post5 sgl_kernel==0.1.5 cuda-python cuda-bindings torch_memory_saver torchao
+# pip3 install "pyarrow>=19.0.1"
+# pip3 install "optree>=0.13.0"
+# pip3 install torchdata math_verify==0.8.0
+```
+
+4. **Install VeRL**
 
 ```bash
 # Clone and install VeRL
 git clone https://github.com/volcengine/verl
 cd verl
-git checkout cb809d66e46dfd3342d008628891a14a054fa424 # verified commit
+git checkout a970718ea525b161e1c5c4285e5f8e7ea7663813 # verified commit
 pip install -e .
 cd ..
-```
-
-4. **Install Dependencies**
-
-```bash
-# Configure pip source
-pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple
-pip3 config set install.trusted-host mirrors.aliyun.com
-
-# Install required packages
-pip3 install tensorboardX qwen_vl_utils
-pip3 install transformers==4.55.0
-pip3 install sglang==0.4.6.post5 sgl_kernel==0.1.5 cuda-python cuda-bindings torch_memory_saver torchao
-pip3 install "pyarrow>=19.0.1"
-pip3 install "optree>=0.13.0"
-pip3 install torchdata math_verify==0.8.0
 ```
 
 # ⚙️ Configuration
