@@ -48,7 +48,7 @@ conda activate ssp
 ```bash
 git clone https://github.com/Alibaba-Quark/SSP.git
 cd SSP
-export PYTHONPATH=$PYTHONPATH:$(pwd)
+export PYTHONPATH=$PYTHONPATH:$(pwd) # `export PYTHONPATH=$PYTHONPATH:$REPO_DIR` in examples/train_ssp.sh
 ```
 
 3. **Install Dependencies**
@@ -75,7 +75,7 @@ pip install -r requirements.txt
 git clone https://github.com/volcengine/verl
 cd verl
 git checkout a970718ea525b161e1c5c4285e5f8e7ea7663813 # verified commit
-pip install -e .
+export PYTHONPATH=$PYTHONPATH:$(pwd) # `export PYTHONPATH=$WORKSPACE/verl` in examples/train_ssp.sh
 cd ..
 ```
 
@@ -173,6 +173,9 @@ export QUARK_BASE_URL=http://judge_host:5000/v1  # LLM-as-a-Judge service URL
 export QUARK_MODEL=judge_model_name              # Judge model name
 export QUARK_SEARCH_CHAT_TEMPLATE=default        # Chat template: default, qwen2p5, R-Search, llama3p1
 export SEARCH_IP=search_service_ip               # Retrieval service IP address
+
+# Workspace path of verl and ssp
+export WORKSPACE=/root/code/my_workspace
 ```
 
 **Distributed Training Configuration:**

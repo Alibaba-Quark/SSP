@@ -35,6 +35,9 @@ export QUARK_MODEL=judge_model_name              # Judge model name
 export QUARK_SEARCH_CHAT_TEMPLATE=default        # Chat template: default, qwen2p5, R-Search, llama3p1
 export SEARCH_IP=search_service_ip               # Retrieval service IP address
 
+# Workspace path of verl and ssp
+export WORKSPACE=/root/code/my_workspace
+
 # ============================================================================
 # Runtime Configuration
 # ============================================================================
@@ -60,8 +63,6 @@ pip3 install sglang==0.4.6.post5 sgl_kernel==0.1.5 cuda-python cuda-bindings tor
 pip3 install "pyarrow>=19.0.1"
 pip3 install "optree>=0.13.0"
 pip3 install torchdata math_verify==0.8.0
-
-export WORKSPACE=/root/code/my_workspace
 
 mkdir -p $WORKSPACE
 
