@@ -35,7 +35,7 @@ data = {
     "data_source": "quark_selfplay_en",
     "prompt": [{"content": "", "role": "system"}, {"content": "", "role": "user"}],
     "ability": "fact-reasoning",
-    "reward_model": {"ground_truth": {"target": ["dummy"]}, "style": "rule"},
+    "reward_model": {"ground_truth": {"target": "dummy"}, "style": "rule"},
     "extra_info": {
         "index": 0,
         "need_tools_kwargs": True,
@@ -45,7 +45,7 @@ data = {
             "search": {
                 "create_kwargs": {
                     "data_source": "quark_selfplay_en",
-                    "ground_truth": {"target": ["dummy"]},
+                    "ground_truth": {"target": "dummy"},
                     "question": "dummy",
                 }
             }
@@ -133,8 +133,8 @@ if __name__ == "__main__":
 
             # update reward_model ground truth target for convenience
             try:
-                processed["reward_model"]["ground_truth"]["target"] = [gt]
-                processed["extra_info"]["tools_kwargs"]["search"]["create_kwargs"]["ground_truth"]["target"] = [gt]
+                processed["reward_model"]["ground_truth"]["target"] = gt
+                processed["extra_info"]["tools_kwargs"]["search"]["create_kwargs"]["ground_truth"]["target"] = gt
             except Exception:
                 pass
 
