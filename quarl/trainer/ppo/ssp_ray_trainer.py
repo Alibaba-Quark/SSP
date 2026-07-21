@@ -656,6 +656,21 @@ class SSPRayPPOTrainer(RayPPOTrainer):
                             except Exception as e:
                                 logger.warning(f"Failed to dump proposer trajectories: {e}")
 
+                        if self.sp_config.proposer.enable and proposer_gen_batch is not None:
+                            proposer_gen_batch = self._capture_role_log_prob(
+                                proposer_gen_batch, "proposer", timing_raw
+                            )
+
+                        if (
+                            self.sp_config.solver.enable
+                            and solver_gen_batch is not None
+                            and (
+                                self.global_steps > self.sp_config.proposer.warm_up_steps
+                                or not self.sp_config.proposer.enable
+                            )
+                        ):
+                            solver_gen_batch = self._capture_role_log_prob(solver_gen_batch, "solver", timing_raw)
+
                         with marked_timer("model_updates", timing_raw):
 
                             representative_batch = solver_gen_batch
@@ -1464,6 +1479,7 @@ class SSPRayPPOTrainer(RayPPOTrainer):
             if key not in [
                 "old_log_probs",
                 "ref_log_prob",
+                "entropys",
                 "token_level_scores",
                 "token_level_rewards",
                 "advantages",
@@ -1473,14 +1489,30 @@ class SSPRayPPOTrainer(RayPPOTrainer):
                 gen_batch.batch[key] = gen_batch.batch[key].long()
 
         with marked_timer(f"{role}_old_log_prob", timing_raw, color="blue"):
-            old_log_prob = self.actor_rollout_wg.compute_log_prob(gen_batch)
-            entropys = old_log_prob.batch["entropys"]
+            if "old_log_probs" in gen_batch.batch.keys():
+                entropys = gen_batch.batch["entropys"]
+            else:
+                try:
+                    old_log_prob = self.actor_rollout_wg.compute_log_prob(gen_batch)
+                except Exception as e:
+                    if "numel() == 0" not in str(e) and "cu_seq_lens" not in str(e):
+                        raise
+                    logger.warning(
+                        f"{role}: compute_log_prob hit the empty-packed-sequence "
+                        f"error despite the response_mask/position_ids guard -- "
+                        f"skipping this role's update for step {self.global_steps} "
+                        f"rather than crashing the run: {e}"
+                    )
+                    return metrics
+                entropys = old_log_prob.batch["entropys"]
+                old_log_prob.batch.pop("entropys")
+                gen_batch = gen_batch.union(old_log_prob)
+
             response_masks = gen_batch.batch["response_mask"]
             loss_agg_mode = self.config.actor_rollout_ref.actor.loss_agg_mode
             entropy_agg = agg_loss(loss_mat=entropys, loss_mask=response_masks, loss_agg_mode=loss_agg_mode)
             metrics[f"{role}/actor/entropy"] = entropy_agg.detach().item()
-            old_log_prob.batch.pop("entropys")
-            gen_batch = gen_batch.union(old_log_prob)
+            gen_batch.batch.pop("entropys", None)
 
         if self.use_reference_policy:
             with marked_timer(f"{role}_ref", timing_raw, color="olive"):
@@ -1548,6 +1580,14 @@ class SSPRayPPOTrainer(RayPPOTrainer):
         )
 
         return metrics
+
+    def _capture_role_log_prob(self, gen_batch: DataProto, role: str, timing_raw: Dict) -> DataProto:
+        if gen_batch is None or "old_log_probs" in gen_batch.batch:
+            return gen_batch
+
+        with marked_timer(f"{role}_old_log_prob", timing_raw, color="blue"):
+            old_log_prob = self.actor_rollout_wg.compute_log_prob(gen_batch)
+            return gen_batch.union(old_log_prob)
 
     def _dump_trajectories(self, inputs, outputs, scores, role: str, step: int, reward_extra_infos_dict=None):
         try:
